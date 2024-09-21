@@ -1,9 +1,10 @@
 'use server';
 import { redirect } from 'next/navigation';
 
-import { hashUserPassword } from "@/lib/hash";
-import { createUser } from "@/lib/user";
+import { hashUserPassword, verifyPassword } from "@/lib/hash";
+import { createUser, getUserByEmail } from "@/lib/user";
 import { createAuthSession } from '@/lib/auth';
+import { getUserByEmail } from '@/lib/user';
 
 // Essa função é chamada no arquivo components/auth-form.js e deve ser passada como argumento para a função useFormState
 export async function signup(prevState, formData) {
@@ -48,7 +49,35 @@ export async function signup(prevState, formData) {
         }
         throw error;
     }
-
-
-
 }
+
+export async function login(prevState, formData){
+    const email = formData.get('email');
+    const password = formData.get('password');
+
+    const existingUser = getUserByEmail(email);
+
+    if (!existingUser) {
+        return {
+            errors: {
+                email: 'Could not authenticate user, please check your credentials'
+            }
+        };
+    }
+
+    const isValidPassword = verifyPassword(existingUser.password, password);
+
+    if (!isValidPassword) {
+        return {
+            errors: {
+                password: 'Could not authenticate user, please check your credentials'
+            }
+        };
+    }
+
+    //cria uma sessão de autenticação para o usuário recém-logado
+    await createAuthSession(existingUser.id);
+
+    //após criar o usuário com sucesso, redireciona para a página de treinos
+    redirect('/training'); //redireciona para a página inicial
+} 
