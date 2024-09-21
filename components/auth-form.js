@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useFormState } from 'react-dom';
 
 import { signup } from '@/actions/auth-actions';
-export default function AuthForm() {
+export default function AuthForm({ mode }) { //'login' ou 'signup' -> são os valores possíveis para a propriedade mode
 
   const [ formState, formAction ] = useFormState(signup, {}); // O signup é uma função que está no arquivo actions/auth-actions.js
 
@@ -38,11 +38,13 @@ export default function AuthForm() {
 
       <p>
         <button type="submit">
-          Create Account
+          {mode === 'login' ? 'Login' : 'Create Account'}
         </button>
       </p>
       <p>
-        <Link href="/">Login with existing account.</Link>
+        /{/* Ao clicar no link, o usuário será redirecionado para a página de login */}
+        {mode === 'login' && (<Link href="/?mode=signup">Create an account.</Link>)}
+        {mode === 'signup' && (<Link href="/?mode=login">Login with existing account.</Link>)}
       </p>
     </form>
   );
