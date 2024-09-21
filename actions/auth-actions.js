@@ -1,8 +1,9 @@
 'use server';
 import { redirect } from 'next/navigation';
 
-import { createUser } from "@/lib/user";
 import { hashUserPassword } from "@/lib/hash";
+import { createUser } from "@/lib/user";
+import { createAuthSession } from '@/lib/auth';
 
 // Essa função é chamada no arquivo components/auth-form.js e deve ser passada como argumento para a função useFormState
 export async function signup(prevState, formData) {
@@ -29,19 +30,25 @@ export async function signup(prevState, formData) {
 
     //create a new user:
     try {
-        await createUser(email, hashedPassword);
+        const id = await createUser(email, hashedPassword);
+        console.log('User created with id:', id);
+        //cria uma sessão de autenticação para o usuário recém-criado
+        await createAuthSession(id);
+
+
+        //após criar o usuário com sucesso, redireciona para a página de treinos
+        redirect('/training'); //redireciona para a página inicial
     } catch (error) {
         if (error.code === 'SQLITE_CONSTRAINT_UNIQUE') {
             return {
-                errors: { 
-                    email: 'Email already in use' 
+                errors: {
+                    email: 'Email already in use'
                 }
             };
         }
         throw error;
     }
 
-    //após criar o usuário com sucesso, redireciona para a página de treinos
-    redirect('/training'); //redireciona para a página inicial
+
 
 }
