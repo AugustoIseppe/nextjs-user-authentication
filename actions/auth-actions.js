@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation';
 
 import { hashUserPassword, verifyPassword } from "@/lib/hash";
 import { createUser, getUserByEmail } from "@/lib/user";
-import { createAuthSession } from '@/lib/auth';
+import { createAuthSession, destroySession } from '@/lib/auth';
 
 // Essa função é chamada no arquivo components/auth-form.js e deve ser passada como argumento para a função useFormState
 export async function signup(prevState, formData) {
@@ -87,4 +87,9 @@ export async function auth(mode, prevState, formData){
     } else if (mode === 'signup') {
         return signup(prevState, formData);
     }
+}
+
+export async function logout(){
+    await destroySession();
+    redirect('/'); //redireciona para a página inicial
 }
