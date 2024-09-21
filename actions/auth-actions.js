@@ -1,6 +1,7 @@
 'use server';
 
 import { createUser } from "@/lib/user";
+import { hashUserPassword } from "@/lib/hash";
 
 // Essa função é chamada no arquivo components/auth-form.js e deve ser passada como argumento para a função useFormState
 export async function signup(prevState, formData) {
@@ -22,8 +23,10 @@ export async function signup(prevState, formData) {
         return { errors: errors };
     }
 
+    const hashedPassword = hashUserPassword(password);
+
     //create a new user:
-    createUser(email, password);
+    createUser(email, hashedPassword);
 
     
 }
