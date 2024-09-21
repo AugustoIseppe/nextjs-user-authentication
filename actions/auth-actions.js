@@ -1,11 +1,13 @@
 'use server';
 
+import { createUser } from "@/lib/user";
+
 // Essa função é chamada no arquivo components/auth-form.js e deve ser passada como argumento para a função useFormState
 export async function signup(prevState, formData) {
     const email = formData.get('email'); // o nome e-mail vem do input do formulário atraves do atributo name (name="email")
     const password = formData.get('password'); // o nome password vem do input do formulário atraves do atributo name (name="password")
 
-    //validar os dados do formulário
+    //validar os dados do formulário:
     let errors = {};
 
     if (!email.includes('@')) {
@@ -19,6 +21,9 @@ export async function signup(prevState, formData) {
     if (Object.keys(errors).length > 0) {
         return { errors: errors };
     }
-    //create a new user
+
+    //create a new user:
+    createUser(email, password);
+
     
 }
