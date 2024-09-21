@@ -1,4 +1,5 @@
 'use server';
+import { redirect } from 'next/navigation';
 
 import { createUser } from "@/lib/user";
 import { hashUserPassword } from "@/lib/hash";
@@ -23,10 +24,24 @@ export async function signup(prevState, formData) {
         return { errors: errors };
     }
 
+    //hash da senha do usuário: a funcao hashUserPassword está no arquivo lib/hash.js
     const hashedPassword = hashUserPassword(password);
 
     //create a new user:
-    createUser(email, hashedPassword);
+    try {
+        await createUser(email, hashedPassword);
+    } catch (error) {
+        if (error.code === 'SQLITE_CONSTRAINT_UNIQUE') {
+            return {
+                errors: { 
+                    email: 'Email already in use' 
+                }
+            };
+        }
+        throw error;
+    }
 
-    
+    //após criar o usuário com sucesso, redireciona para a página de treinos
+    redirect('/training'); //redireciona para a página inicial
+
 }
