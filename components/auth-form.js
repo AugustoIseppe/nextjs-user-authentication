@@ -3,10 +3,11 @@
 import Link from 'next/link';
 import { useFormState } from 'react-dom';
 
-import { signup } from '@/actions/auth-actions';
+import { auth } from '@/actions/auth-actions';
+
 export default function AuthForm({ mode }) { //'login' ou 'signup' -> são os valores possíveis para a propriedade mode
 
-  const [ formState, formAction ] = useFormState(signup, {}); // O signup é uma função que está no arquivo actions/auth-actions.js
+  const [ formState, formAction ] = useFormState(auth.bind(null, mode), {}); // O signup é uma função que está no arquivo actions/auth-actions.js
 
   return (
 

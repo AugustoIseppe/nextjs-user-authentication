@@ -4,7 +4,6 @@ import { redirect } from 'next/navigation';
 import { hashUserPassword, verifyPassword } from "@/lib/hash";
 import { createUser, getUserByEmail } from "@/lib/user";
 import { createAuthSession } from '@/lib/auth';
-import { getUserByEmail } from '@/lib/user';
 
 // Essa função é chamada no arquivo components/auth-form.js e deve ser passada como argumento para a função useFormState
 export async function signup(prevState, formData) {
@@ -80,4 +79,12 @@ export async function login(prevState, formData){
 
     //após criar o usuário com sucesso, redireciona para a página de treinos
     redirect('/training'); //redireciona para a página inicial
-} 
+}
+
+export async function auth(mode, prevState, formData){
+    if (mode === 'login') {
+        return login(prevState, formData);
+    } else if (mode === 'signup') {
+        return signup(prevState, formData);
+    }
+}
